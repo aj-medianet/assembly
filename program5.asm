@@ -1,7 +1,7 @@
 TITLE Program 5     (program5.asm)
 
 ; Author: Andrew Joseph
-; Last Modified: May 13 2018
+; Last Modified: May 28 2018
 ; OSU email address: josephan@oregonstate.edu
 ; Course number/section: cs271 - ecampus
 ; Project Number: 5                Due Date: May 28 2018 (with extension I asked for on the 27th)
@@ -196,6 +196,8 @@ sortList	PROC
 	push	ebp				;set up stack frame
 	mov		ebp, esp
 	mov		edi, [ebp+12]	;set address of list into edi
+	mov		esi, [ebp+12]
+	add		esi, 4			; start at k+1
 	mov		ecx, [ebp+8]	;put value of n in ecx
 	mov		eax, ecx
 	dec		eax
@@ -212,16 +214,14 @@ outerLoop:
 
 innerLoop:
 	;if array[j] > array[i] then i = j
-	mov		eax, [edi]
-	add		edi, 4
-	mov		ebx, [edi]
-	cmp		eax, ebx	;if next index is > then switch
+	mov		eax, [edi]		;edi is i
+	mov		ebx, [esi]		;esi is j
+	cmp		eax, ebx		;if if index i > index j then switch/exchange
 	jl		noSwitch
-	;else switch
-	mov		[edi], eax	;move larger eax into next index (edi)
-	sub		edi, 4		;subract 4 to get to prev index
-	mov		[edi], ebx	;mov smaller ebx into prev index
-	add		edi, 4		;mov edi back to next index
+	;else switch/exchange
+	mov		[esi], eax	;move larger eax into esi index 
+	mov		[edi], ebx	;mov smaller ebx into edi index 
+	add		esi, 4		;send esi to next index like j would in higher language
 
 noSwitch:
 	mov		eax, j
@@ -233,6 +233,7 @@ noSwitch:
 	jmp		innerLoop
 
 innerLoopDone:
+	add		edi, 4	;increment k index in array
 	mov		eax, 0	;reset j to 0 
 	mov		j, eax
 	mov		eax, k ;increment k for outer loop
